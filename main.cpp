@@ -1,6 +1,14 @@
 #include <utility>
 #include <iostream>
-#include <string>
+
+//
+#include "Classes/Animal.h"
+#include "Classes/Man.h"
+#include "Classes/Unit.h"
+#include "Classes/Pig.h"
+#include "Classes/Bear.h"
+#include "Classes/ManBearPig.h"
+
 
 typedef int *(*function)(char const *);
 
@@ -12,9 +20,8 @@ bool compare(A const &first, A const &second, B (A::*func)() const) {
 }
 
 template<typename T>
-bool isEqualObjects(const T * const first, const T * const second)
-{
-    return dynamic_cast<const void*>(first) == dynamic_cast<const void*>(second);
+bool isEqualObjects(const T *const first, const T *const second) {
+    return dynamic_cast<const void *>(first) == dynamic_cast<const void *>(second);
 }
 
 #pragma clang diagnostic push
@@ -24,128 +31,6 @@ using std::string;
 using std::cout;
 using std::cin;
 using std::endl;
-
-class Unit {
-public:
-    int getHealthPoints() const {
-        return mHealthPoints;
-    }
-
-    int getManaPoints() const {
-        return mManaPoints;
-    }
-
-    Unit(int mHealthPoints, int mManaPoints) :
-            mHealthPoints(mHealthPoints), mManaPoints(mManaPoints) {};
-
-    Unit() {
-        mManaPoints = 100;
-        mHealthPoints = 100;
-    }
-
-protected:
-    int mHealthPoints;
-    int mManaPoints;
-};
-
-class Man : public Unit {
-public:
-    explicit Man(string mName) : Unit(), mName(std::move(mName)) {}
-
-    Man(int mHealthPoints, int mManaPoints, string mName) :
-            Unit(mHealthPoints, mManaPoints), mName(std::move(mName)) {}
-
-    const string &getName() const {
-        return mName;
-    }
-
-private:
-    string mName;
-};
-
-class Animal {
-public:
-
-    Animal() = delete;
-
-    explicit Animal(string mVoice) : mVoice(std::move(mVoice)) {}
-
-    int getHunger() const {
-        return mHunger;
-    }
-
-    void getVoice() const {
-        cout << mVoice << endl;
-    }
-
-    virtual void eat() = 0;
-
-protected:
-    int mHunger = 45;
-    string mVoice;
-    int mDeltaEating = 15;
-};
-
-class Bear : public virtual Animal {
-public:
-
-    Bear() : Animal("AAarrghhh!!1!") {}
-
-    void showTeeth() {
-        cout << "______" << endl;
-        cout << R"(\/\/\/)" << endl;
-        cout << R"(/\/\/\)" << endl;
-        cout << "------" << endl;
-    }
-
-    void eat() override {
-        if (mHunger >= mDeltaEating) {
-            mHunger -= mDeltaEating;
-            cout << "That was tasty!" << endl;
-        } else {
-            cout << "I'm full!" << endl;
-        }
-    }
-};
-
-class Pig : public virtual Animal {
-public:
-
-    Pig() : Animal("Oink-oink!!!") {}
-
-    void eat() override {
-        if (mHunger >= mDeltaEating) {
-            mHunger -= mDeltaEating;
-            cout << "Oink-oink. That was tasty!" << endl;
-        } else {
-            mFat += mDeltaEating;
-            cout << "Getting fatter! Oink!" << endl;
-        }
-    }
-
-    int getFat() {
-        return mFat;
-    }
-
-protected:
-    int mFat = 0;
-};
-
-class ManBearPig : public Man, public Bear, public Pig {
-public:
-
-    explicit ManBearPig(const string &mName) : Man(mName), Animal("I'm a monster!") {
-        mHunger = 0;
-    }
-
-    void scare() {
-        cout << "Booo!" << endl;
-    }
-
-    void eat() final {
-        cout << "I can live without eating" << endl;
-    }
-};
 
 void testUnit();
 
@@ -238,7 +123,7 @@ void testMBP() {
     mbp.getVoice();
     mbp.showTeeth();
     mbp.scare();
-    mbp.getName();
+    cout << mbp.getName() << endl;
     cout << mbp.getHealthPoints() << endl;
     cout << mbp.getManaPoints() << endl;
     cout << endl << endl;
